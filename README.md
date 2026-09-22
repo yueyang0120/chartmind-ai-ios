@@ -1,4 +1,18 @@
-# ChartMind AI
+<p align="center">
+  <img src="assets/readme-banner.svg" alt="ChartMind AI for iOS" width="100%">
+</p>
+
+<p align="center">
+  <img alt="platform" src="https://img.shields.io/badge/platform-ios-111827?logo=apple&logoColor=white">
+  <img alt="ui" src="https://img.shields.io/badge/ui-swiftui-f05138?logo=swift&logoColor=white">
+  <img alt="providers" src="https://img.shields.io/badge/providers-multiple-3b82f6">
+</p>
+
+<p align="center">
+  <a href="#build">Build</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#review-guide">Review guide</a>
+</p>
 
 AI-native SwiftUI app for personalized chart interpretation. It combines a deterministic rule-based chart engine with multi-provider LLM interpretation, turning structured profile inputs into personalized reading flows, relationship analysis, history views, localization, and a native iOS widget.
 
@@ -37,6 +51,11 @@ This split keeps the core domain computation inspectable while still using LLMs 
 - Configuration hygiene: real API keys are kept out of git through environment variables or local `Config.xcconfig`.
 
 ## Architecture
+
+<p align="center">
+  <img src="assets/architecture.svg" alt="ChartMind AI for iOS architecture" width="100%">
+</p>
+
 
 ```text
 Birth profile input
