@@ -1,3 +1,5 @@
+# ChartMind: Zi Wei Dou Shu for iOS
+
 <p align="center">
   <img src="assets/readme-banner.svg" alt="ChartMind AI for iOS" width="100%">
 </p>
@@ -14,9 +16,9 @@
   <a href="#review-guide">Review guide</a>
 </p>
 
-AI-native SwiftUI app for personalized chart interpretation. It combines a deterministic rule-based chart engine with multi-provider LLM interpretation, turning structured profile inputs into personalized reading flows, relationship analysis, history views, localization, and a native iOS widget.
+SwiftUI prototype for Zi Wei Dou Shu astrology chart calculation and AI-generated readings. It combines a deterministic rule-based chart engine with multi-provider LLM interpretation, turning structured profile inputs into personalized reading flows, relationship analysis, history views, localization, and a native iOS widget.
 
-The product goal is to make a complex charting system usable through a modern AI interface: deterministic calculation provides the factual structure, and LLMs turn that structure into readable, personalized guidance.
+The product goal is to make a complex charting system usable through a modern AI interface: deterministic calculation provides the rule-based chart structure, and LLMs turn that structure into readable, personalized guidance.
 
 ## At a Glance
 
@@ -26,7 +28,6 @@ The product goal is to make a complex charting system usable through a modern AI
 | Native app layer | SwiftUI onboarding, profile input, chart display, relationship analysis, history, localization, and widget surface. |
 | Domain bridge | JavaScriptCore integration with a bundled rule-based chart engine. |
 | AI layer | Provider abstraction across Gemini, OpenAI, and DeepSeek with structured prompt generation. |
-| FDE relevance | Shows end-to-end product execution: ambiguous user need -> deterministic engine -> AI interpretation -> native app experience. |
 
 ## Product Concept
 
@@ -52,9 +53,27 @@ This split keeps the core domain computation inspectable while still using LLMs 
 
 ## Architecture
 
-<p align="center">
-  <img src="assets/architecture.svg" alt="ChartMind AI for iOS architecture" width="100%">
-</p>
+```mermaid
+flowchart TD
+  UI["SwiftUI · birth profile + reading mode"] --> Z["ZiWeiChartService"]
+  Z --> J["JavaScriptCore · bundled iztro"]
+  J --> C["Structured Zi Wei Dou Shu chart"]
+  C --> P["DetailedPromptGenerator"]
+  P --> F["FortuneAnalyzerService"]
+  F --> G["Gemini"]
+  F --> O["OpenAI"]
+  F --> D["DeepSeek"]
+  G --> V["Reading / relationship views"]
+  O --> V
+  D --> V
+  V --> H["ReadingHistoryService"]
+  H --> DB[("Core Data · local profiles and readings")]
+  W["Widget extension · separate target"]
+  classDef native fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+  classDef model fill:#ede9fe,stroke:#7c3aed,color:#2e1065;
+  class UI,Z,J,H,DB,W native;
+  class F,G,O,D model;
+```
 
 
 ```text
@@ -120,10 +139,14 @@ OPENAI_API_KEY=...
 DEEPSEEK_API_KEY=...
 ```
 
-## Portfolio Positioning
 
-This is a prototype, not a production App Store release. Its value as a portfolio project is the end-to-end product execution: native iOS UI, local persistence, JavaScript bridging, structured domain computation, multi-provider AI integration, prompt orchestration, and clean local-secret handling.
+## Extension points and limits
 
-The strongest positioning is: an AI-native iOS app built end to end, using a concrete rule-based domain to demonstrate how deterministic systems and LLMs can be composed into a real product experience.
+This is a native Zi Wei Dou Shu astrology prototype. Birth inputs produce a chart according to the bundled domain rules; deterministic computation does not validate the predictions made from that chart.
 
-For an FDE-style review, the important signal is not the astrology domain itself. The useful signal is the architecture pattern: take a rule-heavy domain, expose it through a usable product flow, and use LLMs only where they add synthesis and explanation rather than replacing the underlying deterministic computation.
+- Change chart computation in `ai-fortune-teller/Features/Fortune/Services/ZiWeiChartService.swift`.
+- Change model context in `DetailedPromptGenerator.swift`.
+- Add a provider through `FortuneAnalyzerService.swift` and the related configuration.
+- Extend saved profiles/readings through the Core Data model and history service.
+
+The app calls AI providers directly with local development credentials. A distributed product would need a suitable credential and backend design. The widget is a separate extension target; the diagram does not imply it shares the full reading-generation pipeline.
